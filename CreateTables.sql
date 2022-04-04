@@ -1,0 +1,38 @@
+CREATE TABLE Products(
+	ID INT PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+	Name NVARCHAR(100) NOT NULL,
+	Description NVARCHAR(500) NOT NULL,
+	Amount INT NOT NULL CHECK (Amount >= 1),
+	Price FLOAT NOT NULL CHECK (Price > 0),
+	ProductUnit NVARCHAR(50) CHECK (ProductUnit = 'Kg' OR ProductUnit = 'G' OR ProductUnit = 'Ml'),
+	CoffeeIntensity INT NOT NULL CHECK (CoffeeIntensity >= 1)
+)
+
+CREATE TABLE Users(
+	ID INT PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+	FirstName NVARCHAR(100) NOT NULL,
+	LastName NVARCHAR(100) NOT NULL,
+	Email NVARCHAR(100) NOT NULL
+)
+
+CREATE TABLE Addresses(
+	ID INT PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+	City NVARCHAR(50) NOT NULL,
+	Street NVARCHAR(100) NOT NULL,
+	Number NVARCHAR(10) NOT NULL,
+	UserId INT FOREIGN KEY REFERENCES Users(ID) UNIQUE,
+)
+
+CREATE TABLE Orders(
+	ID INT PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+	UserId INT FOREIGN KEY REFERENCES Users(ID),
+	OrderStatus NVARCHAR(50) NOT NULL CHECK (OrderStatus = 'InProgres' OR OrderStatus = 'Canceled' OR OrderStatus = 'Delivered' OR OrderStatus = 'Placed')
+)
+
+CREATE TABLE ProductOrders(
+	ID INT PRIMARY KEY IDENTITY (1, 1) NOT NULL,
+	UserId INT FOREIGN KEY REFERENCES Users(ID),
+	OrderId INT FOREIGN KEY REFERENCES Orders(ID),
+	Quantity INT NOT NULL CHECK (Quantity >= 1),
+	CONSTRAINT fk_ProductOrders UNIQUE (UserId, OrderId)
+)
